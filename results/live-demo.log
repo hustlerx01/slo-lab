@@ -1,0 +1,22 @@
+[15:50:23] phase 1: healthy, 20 rps
+[15:52:23] err5m=0 alerts: none
+[15:52:23] phase 2: chaos error_rate=0.3
+[15:52:53] t+30s err5m=0.052912449737381885 err1h=0.05291244973738189 alerts: none
+[15:53:23] t+60s err5m=0.09744921983393703 err1h=0.09744921983393703 alerts: CheckoutSLOAvailabilityBurn1h=pending, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:53:53] t+90s err5m=0.1282210807650004 err1h=0.12822108076500038 alerts: CheckoutSLOAvailabilityBurn1h=pending, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:54:23] t+120s err5m=0.15023674050628574 err1h=0.15023674050628577 alerts: CheckoutSLOAvailabilityBurn1h=pending, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:54:53] t+150s err5m=0.17083999925405866 err1h=0.17083999925405866 alerts: CheckoutSLOAvailabilityBurn1h=pending, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:55:23] t+180s err5m=0.18449496175694013 err1h=0.1876909148307544 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:55:53] t+210s err5m=0.21668318118591107 err1h=0.1995575548843847 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:56:23] t+240s err5m=0.24956822783345703 err1h=0.20987593405802038 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:56:23] phase 3: recover
+[15:56:53] recover t+30s err5m=0.2514517787366455 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:57:23] recover t+60s err5m=0.2516187050359712 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:57:53] recover t+90s err5m=0.21700827040632867 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:58:23] recover t+120s err5m=0.18619698058950396 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:58:53] recover t+150s err5m=0.15435759209344116 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:59:23] recover t+180s err5m=0.12291105121293802 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[15:59:53] recover t+210s err5m=0.08746408045977011 alerts: CheckoutSLOAvailabilityBurn1h=firing, CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[16:00:24] recover t+240s err5m=0.05192238591448078 alerts: CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[16:00:54] recover t+270s err5m=0.020833333333333332 alerts: CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
+[16:01:24] recover t+300s err5m=0 alerts: CheckoutSLOAvailabilityBurn6h=pending, CheckoutSLOAvailabilityBurn1d=pending, CheckoutSLOAvailabilityBurn3d=pending
