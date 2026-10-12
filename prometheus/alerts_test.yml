@@ -1,0 +1,93 @@
+# promtool unit tests for the burn-rate alerts. Run: promtool test rules prometheus/alerts_test.yml
+rule_files: [slo-rules.yml]
+evaluation_interval: 15s
+tests:
+  # 1) Hard outage: 20% errors at 10 rps -> 40x burn -> fast page fires after 2m, slow ticket does not yet
+  - interval: 15s
+    input_series:
+      - series: 'http_requests_total{route="/checkout",code="200"}'
+        values: '0+120x400'
+      - series: 'http_requests_total{route="/checkout",code="500"}'
+        values: '0+30x400'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: CheckoutSLOAvailabilityBurn1h
+        exp_alerts: []                      # still pending (for: 2m)
+      - eval_time: 5m
+        alertname: CheckoutSLOAvailabilityBurn1h
+        exp_alerts:
+          - exp_labels: {severity: page, slo: checkout-availability, burn_rate: "14.4"}
+            exp_annotations:
+              summary: "checkout availability SLO burning 14.4x budget (1h/5m windows)"
+              description: "1h ratio=20% > 7.2%. At 14.4x, 2% of the 30d budget is gone in 1h."
+              runbook_url: https://github.com/ansarshaikh/slo-lab/blob/main/RUNBOOK.md#availability
+      - eval_time: 30m
+        alertname: CheckoutSLOAvailabilityBurn3d
+        exp_alerts: []                      # needs for: 3h
+  # 2) Healthy: 0.2% errors (under 0.5% budget) -> nothing fires, ever
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{route="/checkout",code="200"}'
+        values: '0+998x600'
+      - series: 'http_requests_total{route="/checkout",code="500"}'
+        values: '0+2x600'
+    alert_rule_test:
+      - {eval_time: 1h, alertname: CheckoutSLOAvailabilityBurn1h, exp_alerts: []}
+      - {eval_time: 10h, alertname: CheckoutSLOAvailabilityBurn6h, exp_alerts: []}
+      - {eval_time: 10h, alertname: CheckoutSLOAvailabilityBurn3d, exp_alerts: []}
+  # 3) Blip resets: 5 min of 100% errors then recovery -> short window clears so 1h page must NOT stay firing
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{route="/checkout",code="200"}'
+        values: '0+600x30 18000 18000 18000 18000 18000 18000+600x60'
+      - series: 'http_requests_total{route="/checkout",code="500"}'
+        values: '0x30 600 1200 1800 2400 3000 3000x60'
+    alert_rule_test:
+      - {eval_time: 50m, alertname: CheckoutSLOAvailabilityBurn1h, exp_alerts: []}
+  # 4) Slow burn: 1% errors (2x budget) for 8h -> 6h/30m page (6x) must NOT fire; 3d ticket stays quiet (<3h data at >1x? fires only after for)
+  - interval: 5m
+    input_series:
+      - series: 'http_requests_total{route="/checkout",code="200"}'
+        values: '0+2970x200'
+      - series: 'http_requests_total{route="/checkout",code="500"}'
+        values: '0+30x200'
+    alert_rule_test:
+      - {eval_time: 8h, alertname: CheckoutSLOAvailabilityBurn6h, exp_alerts: []}
+      - {eval_time: 8h, alertname: CheckoutSLOAvailabilityBurn1d, exp_alerts: []}
+      - eval_time: 8h
+        alertname: CheckoutSLOAvailabilityBurn3d
+        exp_alerts:
+          - exp_labels: {severity: ticket, slo: checkout-availability, burn_rate: "1"}
+            exp_annotations:
+              summary: "checkout availability SLO burning 1x budget (3d/6h windows)"
+              description: "3d ratio=1% > 0.5%. At 1x, 10% of the 30d budget is gone in 3d."
+              runbook_url: https://github.com/ansarshaikh/slo-lab/blob/main/RUNBOOK.md#availability
+  # 5) Latency SLO: 5% of requests slower than 300ms -> 5x budget -> 6h page? no (needs 6x); 1d ticket (3x) fires after 1h
+  - interval: 1m
+    input_series:
+      - series: 'http_request_duration_seconds_bucket{route="/checkout",le="0.3"}'
+        values: '0+570x300'
+      - series: 'http_request_duration_seconds_count{route="/checkout"}'
+        values: '0+600x300'
+    alert_rule_test:
+      - {eval_time: 4h, alertname: CheckoutSLOLatencyBurn6h, exp_alerts: []}
+      - {eval_time: 4h, alertname: CheckoutSLOLatencyBurn1h, exp_alerts: []}
+      - eval_time: 4h
+        alertname: CheckoutSLOLatencyBurn1d
+        exp_alerts:
+          - exp_labels: {severity: ticket, slo: checkout-latency, burn_rate: "3"}
+            exp_annotations:
+              summary: "checkout latency SLO burning 3x budget (1d/2h windows)"
+              description: "1d ratio=5% > 3%. At 3x, 10% of the 30d budget is gone in 1d."
+              runbook_url: https://github.com/ansarshaikh/slo-lab/blob/main/RUNBOOK.md#latency
+  # 6) Regression for bug found in live run 1: with ZERO 5xx series the error ratio must be 0, not absent
+  - interval: 15s
+    input_series:
+      - series: 'http_requests_total{route="/checkout",code="200"}'
+        values: '0+300x40'
+    promql_expr_test:
+      - expr: slo:checkout_errors:ratio_rate5m
+        eval_time: 5m
+        exp_samples:
+          - labels: 'slo:checkout_errors:ratio_rate5m'
+            value: 0
